@@ -7,8 +7,6 @@ const fs = require("fs")
 const keys = require("./keys.js");
 
 let arg2 = "";
-
-
 function argument2() {
     let arg = "";
     if (process.argv[3]) {
