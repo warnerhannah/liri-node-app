@@ -1,18 +1,18 @@
 require("dotenv").config();
 
-var Spotify = require('node-spotify-api');
-var axios = require("axios");
-var moment = require("moment");
-var fs = require("fs")
-var keys = require("./keys.js");
+const Spotify = require('node-spotify-api');
+const axios = require("axios");
+const moment = require("moment");
+const fs = require("fs")
+const keys = require("./keys.js");
 
 let arg2 = "";
 
 
 function argument2() {
-    var arg = "";
+    let arg = "";
     if (process.argv[3]) {
-        for (var i = 3; i < process.argv.length; i++) {
+        for (let i = 3; i < process.argv.length; i++) {
             arg += (process.argv[i] + "+");
         }
     }
@@ -23,23 +23,17 @@ argument2();
 
 // `concert-this`
 function concertThis(arg2) {
-    var artist = arg2;
-    var queryURL = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp"
+    let artist = arg2;
+    const queryURL = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp"
 
     axios.get(queryURL)
         .then(function (response) {
             console.log(queryURL);
+            const mydate = response.data[0].datetime;
 
-            // VENUE NAME
             console.log("Venue: " + response.data[0].venue.name);
-
-            // VENUE LOCATION
             console.log("Location: " + response.data[0].venue.city);
-
-            // DATE OF EVENT
-            var mydate = response.data[0].datetime;
             console.log("Date: " + moment(mydate).format("MM/DD/YYYY"));
-
         })
         .catch(function (error) {
             console.log(error);
@@ -50,12 +44,12 @@ function concertThis(arg2) {
 
 // `spotify-this-song`
 function spotifyThisSong(arg2) {
-    var spotify = new Spotify({
+    const spotify = new Spotify({
         id: keys.spotifykeys.id,
         secret: keys.spotifykeys.secret,
     });
 
-    var song = "";
+    let song = "";
 
     if (arg2) {
         song = arg2;
@@ -82,7 +76,7 @@ function spotifyThisSong(arg2) {
 
 // `movie-this`
 function movieThis(arg2) {
-    var movie = "";
+    let movie = "";
 
     if (!arg2) {
         movie += "Mr. Nobody"
@@ -90,7 +84,7 @@ function movieThis(arg2) {
     else {
         movie = arg2;
     }
-    var queryURL = "http://www.omdbapi.com/?apikey=trilogy&t=" + movie
+    const queryURL = "http://www.omdbapi.com/?apikey=trilogy&t=" + movie
 
 
     axios.get(queryURL)
