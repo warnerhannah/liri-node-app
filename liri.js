@@ -6,28 +6,24 @@ var moment = require("moment");
 var fs = require("fs")
 var keys = require("./keys.js");
 
-switch (process.argv[2]) {
-    case "concert-this":
-        concertThis();
-        break;
-    case "spotify-this-song":
-        spotifyThisSong();
-        break;
-    case "movie-this":
-        movieThis();
-        break;
-    case "do-what-it-says":
-        doWhatItSays();
-        break;
-    default:
-        console.log("Invalid Input!")
-};
+let arg2 = "";
 
+
+function argument2() {
+    var arg = "";
+    if (process.argv[3]) {
+        for (var i = 3; i < process.argv.length; i++) {
+            arg += (process.argv[i] + "+");
+        }
+    }
+    arg2 = arg.slice(0, -1);
+}
+argument2();
 
 
 // `concert-this`
-function concertThis() {
-    var artist = process.argv[3];
+function concertThis(arg2) {
+    var artist = arg2;
     var queryURL = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp"
 
     axios.get(queryURL)
@@ -53,23 +49,22 @@ function concertThis() {
 
 
 // `spotify-this-song`
-function spotifyThisSong() {
+function spotifyThisSong(arg2) {
     var spotify = new Spotify({
         id: keys.spotifykeys.id,
         secret: keys.spotifykeys.secret,
-      });
+    });
 
     var song = "";
 
-    if (!process.argv[3]) {
-        song = "The Sign";
+    if (arg2) {
+        song = arg2;
     }
     else {
-        for (var i = 3; i < process.argv.length; i++) {
-            song += (process.argv[i] + "+");
-        }
+        song = "The Sign";
     };
 
+    console.log(song)
     // SPOTIFY API
     spotify
         .search({ type: 'track', query: song })
@@ -85,18 +80,15 @@ function spotifyThisSong() {
 };
 
 
-
 // `movie-this`
-function movieThis() {
+function movieThis(arg2) {
     var movie = "";
 
-    if (!process.argv[3]) {
+    if (!arg2) {
         movie += "Mr. Nobody"
     }
     else {
-        for (var i = 3; i < process.argv.length; i++) {
-            movie += process.argv[i] + "+";
-        }
+        movie = arg2;
     }
     var queryURL = "http://www.omdbapi.com/?apikey=trilogy&t=" + movie
 
@@ -122,13 +114,46 @@ function movieThis() {
 
 // `do-what-it-says`
 function doWhatItSays() {
+    fs.readFile("random.txt", "utf8", function (err, data) {
+        if (err) {
+            return console.log(err);
+        }
 
+        const newData = data.split(",");
+        console.log(newData);
 
+        arg2 = newData[1];
+        switch (newData[0]) {
+            case "concert-this":
+                concertThis(arg2);
+                break;
+            case "spotify-this-song":
+                spotifyThisSong(arg2);
+                break;
+            case "movie-this":
+                movieThis(arg2);
+                break;
+            default:
+                console.log("Invalid Input!")
+        };
+    })
 };
 
-/*    * Using the `fs` Node package, LIRI will take the text inside of random.txt and then use it to call one of LIRI's commands.
 
-     * It should run `spotify-this-song` for "I Want it That Way," as follows the text in `random.txt`.
 
-     * Edit the text in random.txt to test out the feature for movie-this and concert-this.
-*/ 
+switch (process.argv[2]) {
+    case "concert-this":
+        concertThis(arg2);
+        break;
+    case "spotify-this-song":
+        spotifyThisSong(arg2);
+        break;
+    case "movie-this":
+        movieThis(arg2);
+        break;
+    case "do-what-it-says":
+        doWhatItSays();
+        break;
+    default:
+        console.log("Invalid Input!")
+};
